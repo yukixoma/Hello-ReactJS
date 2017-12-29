@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './css/main.css';
 
+
 class Main extends Component {
     constructor(props) {
         super(props);
@@ -28,41 +29,112 @@ class Main extends Component {
                 }
             ],
             isShow: false,
+            formValue: {}
         };
     }
     onShow = () => {
         this.state.isShow? this.setState({ isShow: false}) : this.setState({ isShow: true})
     }
+    onAddToCart = (text) => {
+        alert(text);
+    }
+
+    onHandleChange = (event) => {
+        let target = event.target;
+        let name = target.name;
+        let value = target.value;
+        let update = this.state.formValue;
+        update[name] = value;
+        this.setState({formValue: update}); 
+    } 
+
+    onHandleSubmit = (event) => {
+        event.preventDefault();
+        this.setState({
+            products: this.state.products.concat(this.state.formValue)}
+            ,()=> {
+                console.log(this.state.products);
+            }
+        );
+    }
     render() {
         let main = [];
         for (let i = 0; i < this.state.products.length; i++) {
             main
-              .push(<div className="col-lg-4" key={i}>
+                .push(
+                    <div className="col-lg-4" key={i}>
                         <div className="card text-center">
                             <img className="card-img-top" src={this.state.products[i].image}  alt=""/>
                             <div className="card-block">
                                 <h3 className="card-tittle"> {this.state.products[i].name} </h3>
                                 <p> {this.state.products[i].price} </p>
-                                <button className="btn btn-outline-primary"> 
-                                    Mua ngay
+                                <button className="btn btn-outline-primary" 
+                                    onClick={ () => { this.onAddToCart(this.state.products[i].name) } }> 
+                                        Mua ngay
                                 </button>
                             </div>
                         </div>
                         <br/>
                     </div>
-            )
+                )
         };
       return (
         <div className="text-center">
-            <div className="row">
+            <form className="col-lg-8 offset-lg-2" onSubmit = { this.onHandleSubmit}>
+                <div className="form-group row">
+                    <label htmlFor="" className="col-2 col-form-label" > Name </label>
+                    <div className="col-10">
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            name="name"
+                            onBlur = { this.onHandleChange }
+                        />
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <label htmlFor="" className="col-2 col-form-label" > Price </label>
+                    <div className="col-10">
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            name="price" 
+                            onBlur = {  this.onHandleChange }
+                        />
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <label htmlFor="" className="col-2 col-form-label"> Image URL </label>
+                        <div className="col-10">
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                name="image" 
+                                onBlur = {  this.onHandleChange }
+                            />
+                        </div>
+                </div>
+                <button type="submit" className="btn btn-primary mr-2" > 
+                    Add 
+                </button>
+                <button type="reset" className="btn btn-warning mr-2" >
+                    Clear
+                </button>
+                
+            </form> 
+            <div style={{marginTop:10}}>
+                <button className="btn btn-danger" onClick={ this.onShow }> 
+                    {this.state.isShow? "Hide": "Show"}
+                </button>
+            </div>
+            <div className="row" style={{marginTop:10}} >
                 {this.state.isShow? main : null}          
             </div>
-            <button className="btn btn-danger" onClick={ this.onShow }> 
-                {this.state.isShow? "Hide": "Show"}
-            </button> 
+            
+            
         </div>
       );
-    }
+    };
   }
   
   export default Main;
